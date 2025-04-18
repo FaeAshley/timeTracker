@@ -1,0 +1,53 @@
+# 🎮 Tournament Viewer App
+
+A dynamic frontend web app that displays live tournament data from [MatchPlay.Events](https://matchplay.events), including active matches, player standings, and round status.
+
+## ✨ Features
+
+- View current and past matches with player placements, game titles, and durations
+- Toggle between full player standings and current round view
+- Standings display includes rank and total points
+- Fully frontend-based—no backend or server setup required
+- Secure API access using bearer token authentication
+
+## 🛠️ Built With
+
+- **JavaScript (ES6+)** – Core logic and API handling
+- **HTML/CSS** – UI structure and responsive styling
+- **MatchPlay.Events API** – External data source for tournaments, matches, and players
+
+## 📦 Setup & Usage
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/tournament-viewer.git
+Open index.html in your browser or deploy it to a static host (Netlify, Vercel, GitHub Pages, etc.).
+
+In script.js, replace the placeholder with your MatchPlay API token:
+
+js
+Copy
+Edit
+const API_TOKEN = "your-api-token-here";
+Enter a tournament ID in the input field and click Load Tournament.
+
+🔐 Notes
+This app requires a valid MatchPlay API token to access tournament data.
+
+Data is fetched directly from the API and rendered dynamically on the frontend.
+
+No server or database required.
+
+🧠 Author
+Fae Ashley
+Portfolio · LinkedIn · GitHub
+
+yaml
+Copy
+Edit
+
+---
+
+Would you like me to generate a `LICENSE` file too, or a badge strip at the top (e.g. “Built with ❤️ in JS”, “MIT License”, “Live Demo”)?
+
+Let’s make this repo sparkle like the queen who built it ✨💋
