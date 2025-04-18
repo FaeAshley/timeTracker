@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weekly Timecard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🕒 Weekly Timecard</h1>
+
+    <div class="week-nav">
+      <button id="prev-week">← Previous</button>
+      <div id="week-range"></div>
+      <button id="next-week">Next →</button>
+    </div>
+
+    <form id="timecard">
+      <table>
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Time Entries</th>
+            <th>Total (hrs)</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="week-rows">
+          <!-- Rows dynamically generated -->
+        </tbody>
+      </table>
+
+      <div class="total">
+        <strong>Total Hours:</strong> <span id="total-hours">0.00</span>
+      </div>
+    </form>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
