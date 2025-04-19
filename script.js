@@ -48,55 +48,49 @@ function renderWeek(offset = 0) {
         const row = document.createElement('tr');
         const dayId = `day-${i}`;
 
-    row.innerHTML = `
-        <td>${days[i]}</td>
-        <td>${formatDate(date)}</td>
-        <td>
-            <div class="type-entry-container" id="${dayId}Type">
-            <select class="slot-type">
-                <option value="work">Work</option>
-                <option value="lunch">Lunch</option>
-                <option value="break">Break</option>
-            </select>
-            </div>
-        </td>
-        <td>
-            <div class="time-entry-container" id="${dayId}Time">
-            <div class="time-slot">
-                <input type="time" class="clock-in" />
-                <input type="time" class="clock-out" />
-            </div>
-            </div>
-        </td>
-        <td class="daily-total" data-day="${dayId}">0.00</td>
-        <td>
-            <button type="button" class="add-slot-btn" data-day="${dayId}">+ Add Time</button>
-        </td>
-        `;
+        row.innerHTML = `
+            <td>${days[i]}</td>
+            <td>${formatDate(date)}</td>
+            <td>
+                <div class="type-entry-container" id="${dayId}Type" data-day="${dayId}">
+                </div>
+            </td>
+            <td>
+                <div class="time-entry-container" id="${dayId}Time">
+                </div>
+            </td>
+            <td class="daily-total" data-day="${dayId}">0.00</td>
+            <td>
+                <button type="button" class="add-slot-btn" data-day="${dayId}">+ Add Time</button>
+            </td>
+            `;
         weekRows.appendChild(row);
+
+        const dayIdType = document.getElementById(`${dayId}Type`);
+        const dayIdTime = document.getElementById(`${dayId}Time`);
+        addTimeSlot(dayIdType, dayIdTime);
+    
     });
 
     document.querySelectorAll('.add-slot-btn').forEach(btn =>
         btn.addEventListener('click', (e) => {
             const dayIdType = e.target.getAttribute('data-day') + "Type";
             const dayIdTime = e.target.getAttribute('data-day') + "Time";
-            addTimeSlot(dayIdType, dayIdTime);
+            const typeCont = document.getElementById(dayIdType)
+            const timeCont = document.getElementById(dayIdTime)
+            addTimeSlot(typeCont, timeCont);
         })
     );
+
     loadWeekData(offset);
-    const dayIdType = document.getElementById(`${dayId}Type`);
-    const dayIdTime = document.getElementById(`${dayId}Time`);
-    addTimeSlot(dayIdType, dayIdTime);
+
 }
 
-function addTimeSlot(typeContainerId, timeContainerId) {
-    const typeContainer = document.getElementById(typeContainerId);
-    const timeContainer = document.getElementById(timeContainerId);
-
-    const typeDiv = document.createElement('div');
-    typeDiv.className = 'slot-type-wrapper';
-
+function addTimeSlot(typeContainer, timeContainer) {
     const dropdown = document.createElement('select');
+
+    const divType = document.createElement('div');
+    divType.className = 'col'
     dropdown.className = 'slot-type';
     ['Work', 'Lunch', 'Break'].forEach(label => {
         const option = document.createElement('option');
@@ -104,8 +98,10 @@ function addTimeSlot(typeContainerId, timeContainerId) {
         option.textContent = label;
         dropdown.appendChild(option);
     });
-    typeDiv.appendChild(dropdown);
-    typeContainer.appendChild(typeDiv);
+
+    divType.appendChild(dropdown)
+    typeContainer.appendChild(divType);
+    dropdown.addEventListener('change', () => { updateHours(); saveWeekData(currentWeekOffset); });
 
     const timeSlot = document.createElement('div');
     timeSlot.className = 'time-slot';
@@ -124,7 +120,6 @@ function addTimeSlot(typeContainerId, timeContainerId) {
 
     clockIn.addEventListener('input', () => { updateHours(); saveWeekData(currentWeekOffset); });
     clockOut.addEventListener('input', () => { updateHours(); saveWeekData(currentWeekOffset); });
-    dropdown.addEventListener('change', () => { updateHours(); saveWeekData(currentWeekOffset); });
 }
 
 function updateHours() {
@@ -142,8 +137,6 @@ function updateHours() {
             const start = slot.querySelector('.clock-in')?.value;
             const end = slot.querySelector('.clock-out')?.value;
             const type = typeSlots[index]?.value;
-
-            console.log(`[${dayId}] Slot ${index} — Start: ${start}, End: ${end}, Type: ${type}`);
 
             if (type === 'work') {
                 dailyTotal += calculateHours(start, end);
@@ -192,10 +185,29 @@ function loadWeekData(offset) {
     const weekData = storage[weekKey] || {};
 
     Object.entries(weekData).forEach(([dayId, slots]) => {
+        const typeContainer = document.getElementById(`${dayId}Type`)
         const timeContainer = document.getElementById(`${dayId}Time`);
+        typeContainer.innerHTML = '';
         timeContainer.innerHTML = ''; // Clear first
 
         slots.forEach(slot => {
+            const divType = document.createElement('div');
+            divType.className = 'col'
+
+            const dropdown = document.createElement('select');
+            dropdown.className = 'slot-type';
+            ['Work', 'Lunch', 'Break'].forEach(label => {
+            const option = document.createElement('option');
+            option.value = label.toLowerCase();
+            option.textContent = label;
+            if (slot.type === label.toLowerCase()) {
+                option.selected = true;
+            }
+            dropdown.appendChild(option);
+            });
+
+            divType.appendChild(dropdown);
+
             const div = document.createElement('div');
             div.className = 'time-slot';
 
@@ -209,22 +221,10 @@ function loadWeekData(offset) {
             clockOut.className = 'clock-out';
             clockOut.value = slot.end;
 
-            const dropdown = document.createElement('select');
-            dropdown.className = 'slot-type';
-            ['Work', 'Lunch', 'Break', 'Meeting'].forEach(label => {
-            const option = document.createElement('option');
-            option.value = label.toLowerCase();
-            option.textContent = label;
-            if (slot.type === label.toLowerCase()) {
-                option.selected = true;
-            }
-            dropdown.appendChild(option);
-            });
-
             div.appendChild(clockIn);
             div.appendChild(clockOut);
-            div.appendChild(dropdown);
             timeContainer.appendChild(div);
+            typeContainer.appendChild(divType)
 
             clockIn.addEventListener('input', () => { updateHours(); saveWeekData(currentWeekOffset); });
             clockOut.addEventListener('input', () => { updateHours(); saveWeekData(currentWeekOffset); });
